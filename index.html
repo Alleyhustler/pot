@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truth Terminal - Color Schemes</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .scheme-selector {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+
+        .scheme-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .scheme-btn:hover {
+            background: #333;
+        }
+
+        .scheme-btn.active {
+            background: #444;
+            border-color: #fff;
+        }
+
+        .terminal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.03) 2px,
+                rgba(255, 255, 255, 0.03) 4px
+            );
+        }
+
+        .screen {
+            padding: 60px 20px 20px 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header-line {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .truth-balance {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            font-size: 16px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            margin-top: 40px;
+        }
+
+        .left-column {
+            width: 50%;
+            padding-right: 40px;
+        }
+
+        .right-column {
+            width: 50%;
+            border-left: 1px solid #333;
+            padding-left: 40px;
+        }
+
+        .section-header {
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .input-field {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            flex: 1;
+            border-bottom: 1px solid #333;
+            padding: 5px 0;
+        }
+
+        .textarea-field {
+            background: transparent;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            resize: vertical;
+        }
+
+        .execute-line {
+            margin-top: 20px;
+        }
+
+        .execute-btn {
+            background: transparent;
+            border: 1px solid;
+            font-family: inherit;
+            font-size: 14px;
+            padding: 8px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .execute-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .claim-btn {
+            background: transparent;
+            border: 1px solid;
+            font-family: inherit;
+            font-size: 14px;
+            padding: 8px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .claim-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-line {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .truth-log {
+            height: 45vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .log-entry {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+        }
+
+        .how-it-works {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #333;
+    background: rgba(0,0,0,0.3);
+}
+
+.help-line {
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #999;
+    line-height: 1.3;
+}
+
+.help-line:last-child {
+    margin-bottom: 0;
+}
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-meta {
+            color: #666;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .log-text {
+            line-height: 1.4;
+            color: #ccc;
+        }
+
+        .system-stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .cooldown-info {
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            font-size: 12px;
+            border-left: 3px solid;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #660000;
+            border-left-color: #ff0000;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+
+        /* Original Green Scheme */
+        .scheme-green .header-line { color: #00ff00; }
+        .scheme-green .truth-balance { color: #ffff00; }
+        .scheme-green .section-header { color: #00ffff; }
+        .scheme-green .prompt { color: #00ff00; }
+        .scheme-green .input-field:focus { border-bottom-color: #00ff00; }
+        .scheme-green .textarea-field:focus { border-color: #00ff00; }
+        .scheme-green .execute-btn { border-color: #ff0000; color: #ff0000; }
+        .scheme-green .execute-btn:hover:not(:disabled) { background: #ff0000; color: #000; }
+        .scheme-green .claim-btn { border-color: #00ff00; color: #00ff00; }
+        .scheme-green .claim-btn:hover:not(:disabled) { background: #00ff00; color: #000; }
+        .scheme-green .cooldown-info { color: #ff6666; }
+        .scheme-green .notification { border-left-color: #00ff00; }
+
+        /* Purple Neon Scheme */
+        .scheme-purple .header-line { color: #bb00ff; }
+        .scheme-purple .truth-balance { color: #ff00ff; }
+        .scheme-purple .section-header { color: #cc88ff; }
+        .scheme-purple .prompt { color: #bb00ff; }
+        .scheme-purple .input-field:focus { border-bottom-color: #bb00ff; }
+        .scheme-purple .textarea-field:focus { border-color: #bb00ff; }
+        .scheme-purple .execute-btn { border-color: #ff3366; color: #ff3366; }
+        .scheme-purple .execute-btn:hover:not(:disabled) { background: #ff3366; color: #000; }
+        .scheme-purple .claim-btn { border-color: #bb00ff; color: #bb00ff; }
+        .scheme-purple .claim-btn:hover:not(:disabled) { background: #bb00ff; color: #000; }
+        .scheme-purple .cooldown-info { color: #ff6699; }
+        .scheme-purple .notification { border-left-color: #bb00ff; }
+
+        /* Blue Cyber Scheme */
+        .scheme-blue .header-line { color: #0088ff; }
+        .scheme-blue .truth-balance { color: #00ddff; }
+        .scheme-blue .section-header { color: #66ccff; }
+        .scheme-blue .prompt { color: #0088ff; }
+        .scheme-blue .input-field:focus { border-bottom-color: #0088ff; }
+        .scheme-blue .textarea-field:focus { border-color: #0088ff; }
+        .scheme-blue .execute-btn { border-color: #ff6600; color: #ff6600; }
+        .scheme-blue .execute-btn:hover:not(:disabled) { background: #ff6600; color: #000; }
+        .scheme-blue .claim-btn { border-color: #0088ff; color: #0088ff; }
+        .scheme-blue .claim-btn:hover:not(:disabled) { background: #0088ff; color: #000; }
+        .scheme-blue .cooldown-info { color: #ff8866; }
+        .scheme-blue .notification { border-left-color: #0088ff; }
+
+        /* Orange Retro Scheme */
+        .scheme-orange .header-line { color: #ff9900; }
+        .scheme-orange .truth-balance { color: #ffcc00; }
+        .scheme-orange .section-header { color: #ffaa33; }
+        .scheme-orange .prompt { color: #ff9900; }
+        .scheme-orange .input-field:focus { border-bottom-color: #ff9900; }
+        .scheme-orange .textarea-field:focus { border-color: #ff9900; }
+        .scheme-orange .execute-btn { border-color: #cc3300; color: #cc3300; }
+        .scheme-orange .execute-btn:hover:not(:disabled) { background: #cc3300; color: #000; }
+        .scheme-orange .claim-btn { border-color: #ff9900; color: #ff9900; }
+        .scheme-orange .claim-btn:hover:not(:disabled) { background: #ff9900; color: #000; }
+        .scheme-orange .cooldown-info { color: #ff6633; }
+        .scheme-orange .notification { border-left-color: #ff9900; }
+
+        /* Red Matrix Scheme */
+        .scheme-red .header-line { color: #ff3333; }
+        .scheme-red .truth-balance { color: #ff6666; }
+        .scheme-red .section-header { color: #ff4444; }
+        .scheme-red .prompt { color: #ff3333; }
+        .scheme-red .input-field:focus { border-bottom-color: #ff3333; }
+        .scheme-red .textarea-field:focus { border-color: #ff3333; }
+        .scheme-red .execute-btn { border-color: #cc0000; color: #cc0000; }
+        .scheme-red .execute-btn:hover:not(:disabled) { background: #cc0000; color: #000; }
+        .scheme-red .claim-btn { border-color: #ff3333; color: #ff3333; }
+        .scheme-red .claim-btn:hover:not(:disabled) { background: #ff3333; color: #000; }
+        .scheme-red .cooldown-info { color: #ff8888; }
+        .scheme-red .notification { border-left-color: #ff3333; }
+
+        /* Teal Hack Scheme */
+        .scheme-teal .header-line { color: #00ccaa; }
+        .scheme-teal .truth-balance { color: #00ffcc; }
+        .scheme-teal .section-header { color: #33ddbb; }
+        .scheme-teal .prompt { color: #00ccaa; }
+        .scheme-teal .input-field:focus { border-bottom-color: #00ccaa; }
+        .scheme-teal .textarea-field:focus { border-color: #00ccaa; }
+        .scheme-teal .execute-btn { border-color: #ff5500; color: #ff5500; }
+        .scheme-teal .execute-btn:hover:not(:disabled) { background: #ff5500; color: #000; }
+        .scheme-teal .claim-btn { border-color: #00ccaa; color: #00ccaa; }
+        .scheme-teal .claim-btn:hover:not(:disabled) { background: #00ccaa; color: #000; }
+        .scheme-teal .cooldown-info { color: #ff7755; }
+        .scheme-teal .notification { border-left-color: #00ccaa; }
+
+        /* Yellow Amber Scheme */
+        .scheme-yellow .header-line { color: #ffcc00; }
+        .scheme-yellow .truth-balance { color: #ffff00; }
+        .scheme-yellow .section-header { color: #ffdd33; }
+        .scheme-yellow .prompt { color: #ffcc00; }
+        .scheme-yellow .input-field:focus { border-bottom-color: #ffcc00; }
+        .scheme-yellow .textarea-field:focus { border-color: #ffcc00; }
+        .scheme-yellow .execute-btn { border-color: #cc6600; color: #cc6600; }
+        .scheme-yellow .execute-btn:hover:not(:disabled) { background: #cc6600; color: #000; }
+        .scheme-yellow .claim-btn { border-color: #ffcc00; color: #ffcc00; }
+        .scheme-yellow .claim-btn:hover:not(:disabled) { background: #ffcc00; color: #000; }
+        .scheme-yellow .cooldown-info { color: #ff9933; }
+        .scheme-yellow .notification { border-left-color: #ffcc00; }
+
+        /* Pink Neon Scheme */
+        .scheme-pink .header-line { color: #ff0099; }
+        .scheme-pink .truth-balance { color: #ff33cc; }
+        .scheme-pink .section-header { color: #ff66dd; }
+        .scheme-pink .prompt { color: #ff0099; }
+        .scheme-pink .input-field:focus { border-bottom-color: #ff0099; }
+        .scheme-pink .textarea-field:focus { border-color: #ff0099; }
+        .scheme-pink .execute-btn { border-color: #cc0066; color: #cc0066; }
+        .scheme-pink .execute-btn:hover:not(:disabled) { background: #cc0066; color: #000; }
+        .scheme-pink .claim-btn { border-color: #ff0099; color: #ff0099; }
+        .scheme-pink .claim-btn:hover:not(:disabled) { background: #ff0099; color: #000; }
+        .scheme-pink .cooldown-info { color: #ff66aa; }
+        .scheme-pink .notification { border-left-color: #ff0099; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-column, .right-column {
+                width: 100%;
+                padding: 0;
+            }
+            
+            .right-column {
+                border-left: none;
+                border-top: 1px solid #333;
+                margin-top: 20px;
+                padding-top: 20px;
+            }
+
+            .scheme-selector {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                transform: none;
+                text-align: center;
+            }
+
+            .screen {
+                padding-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="scheme-green">
+    <div class="scheme-selector">
+        <button class="scheme-btn active" onclick="changeScheme('green')">Matrix</button>
+        <button class="scheme-btn" onclick="changeScheme('purple')">Purple</button>
+        <button class="scheme-btn" onclick="changeScheme('blue')">Cyber</button>
+        <button class="scheme-btn" onclick="changeScheme('orange')">Retro</button>
+        <button class="scheme-btn" onclick="changeScheme('red')">Red</button>
+        <button class="scheme-btn" onclick="changeScheme('teal')">Teal</button>
+        <button class="scheme-btn" onclick="changeScheme('yellow')">Amber</button>
+        <button class="scheme-btn" onclick="changeScheme('pink')">Pink</button>
+    </div>
+
+    <div class="terminal">
+        <div class="screen">
+            <div class="header-line">Price Of Truth vP.fun.Z - Vibes only</div>
+            <div class="header-line">TWITTER / X: Dev</div>
+            <div class="header-line">NETWORK: Solana</div>
+            <div class="header-line">STATUS: Live CA HERE</div>
+            
+            <div class="truth-balance">
+                BALANCE: <span id="balance">1000</span> $P.o.T
+            </div>
+
+            <div class="main-content">
+                <div class="left-column">
+                    <div class="section-header">/// TOKEN OPERATIONS</div>
+                    
+                    <div class="input-line">
+                        <span class="prompt">claim&gt;</span>
+                        <button class="claim-btn" id="claimBtn">REQUEST_TOKENS</button>
+                    </div>
+                    <div class="cooldown-info" id="claimCooldown">Next claim available</div>
+                    
+                    <div class="status-line">TOTAL_ENTRIES: <span id="totalEntries">0</span></div>
+                    <div class="status-line">TOTAL_BURNED: <span id="totalBurned">0</span></div>
+                    <div class="status-line">LAST_SUBMIT: <span id="lastSubmit">NONE</span></div>
+
+                    <div class="section-header" style="margin-top: 30px;">/// TRUTH SUBMISSION</div>
+                    
+                    <div class="input-line">
+                        <span class="prompt">burn&gt;</span>
+                        <input type="number" class="input-field" id="burnAmount" value="10" min="1">
+                        <span style="margin-left: 10px; color: #666;">$TRUTH</span>
+                    </div>
+                    
+                    <div class="input-line" style="align-items: flex-start; margin-top: 15px;">
+                        <span class="prompt" style="margin-top: 10px;">msg&gt;</span>
+                        <textarea class="textarea-field" id="truthMessage" placeholder="Enter your immutable message..." maxlength="500"></textarea>
+                    </div>
+                    
+                    <div class="execute-line">
+                        <span class="prompt">exec&gt;</span>
+                        <button class="execute-btn" id="submitBtn">BURN_AND_SUBMIT</button>
+                    </div>
+                    <div class="cooldown-info" id="submitCooldown">Submit available</div>
+                </div>
+
+                <div class="right-column">
+                    <div class="section-header">/// HOW IT WORKS</div>
+                    
+                    <div class="how-it-works">
+                        <div class="help-line">&gt; CLAIM tokens every hour (10-100 $TRUTH)</div>
+                        <div class="help-line">&gt; BURN tokens to submit immutable messages</div>
+                        <div class="help-line">&gt; Higher burns = permanent blockchain record</div>
+                        <div class="help-line">&gt; All submissions publicly visible forever</div>
+                        <div class="help-line">&gt; 1 hour cooldown between submissions</div>
+                    </div>
+
+                    <div class="section-header" style="margin-top: 25px;">/// IMMUTABLE RECORD</div>
+                    
+                    <div class="truth-log" id="truthLog">
+                        <div class="log-entry">
+                            <div class="log-meta">
+                                <span class="timestamp">[2025-06-08 12:00:00]</span> | 
+                                <span class="burn-amount">BURNED: 100 $TRUTH</span>
+                            </div>
+                            <div class="log-text">
+                                &gt; SYSTEM_INIT: Truth Terminal operational. All submissions permanent. Token burn required for message commitment. Immutable ledger active.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-stats">
+                UPTIME: <span id="uptime">00:00:00</span> | 
+                MEMORY: 2.1GB | 
+                CPU: 0.3% | 
+                BLOCKCHAIN_SYNC: 100%
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let gameState = {
+            tokens: 1000,
+            entries: [],
+            lastClaim: 0,
+            lastSubmission: 0,
+            totalBurned: 0,
+            startTime: Date.now()
+        };
+
+        const HOUR_MS = 60 * 60 * 1000;
+
+        function init() {
+            updateDisplay();
+            setInterval(updateDisplay, 1000);
+            
+            // Connect event listeners
+            document.getElementById('claimBtn').addEventListener('click', executeClaim);
+            document.getElementById('submitBtn').addEventListener('click', executeSubmit);
+        }
+
+        function updateDisplay() {
+            document.getElementById('balance').textContent = gameState.tokens.toLocaleString();
+            document.getElementById('totalEntries').textContent = gameState.entries.length;
+            document.getElementById('totalBurned').textContent = gameState.totalBurned.toLocaleString();
+            
+            if (gameState.entries.length > 0) {
+                const last = gameState.entries[gameState.entries.length - 1];
+                document.getElementById('lastSubmit').textContent = formatTimestamp(last.timestamp);
+            }
+            
+            updateTruthLog();
+            updateCooldowns();
+            updateUptime();
+        }
+
+        function updateTruthLog() {
+            if (gameState.entries.length === 0) return;
+            
+            const log = document.getElementById('truthLog');
+            const systemEntry = `
+                <div class="log-entry">
+                    <div class="log-meta">
+                        <span class="timestamp">[2025-06-08 12:00:00]</span> | 
+                        <span class="burn-amount">BURNED: 100 $TRUTH</span>
+                    </div>
+                    <div class="log-text">
+                        &gt; SYSTEM_INIT: Truth Terminal operational. All submissions permanent. Token burn required for message commitment. Immutable ledger active.
+                    </div>
+                </div>
+            `;
+            
+            const userEntries = gameState.entries.map(entry => `
+                <div class="log-entry">
+                    <div class="log-meta">
+                        <span class="timestamp">[${formatFullTimestamp(entry.timestamp)}]</span> | 
+                        <span class="burn-amount">BURNED: ${entry.burned.toLocaleString()} $TRUTH</span>
+                    </div>
+                    <div class="log-text">
+                        &gt; ${escapeHtml(entry.message)}
+                    </div>
+                </div>
+            `).reverse().join('');
+            
+            log.innerHTML = userEntries + systemEntry;
+        }
+
+        function executeClaim() {
+            const now = Date.now();
+            if (now - gameState.lastClaim < HOUR_MS) {
+                showNotification('CLAIM_DENIED: Cooldown active', 'error');
+                return;
+            }
+            
+            const amount = Math.floor(Math.random() * 91) + 10;
+            gameState.tokens += amount;
+            gameState.lastClaim = now;
+            
+            showNotification(`CLAIM_SUCCESS: +${amount} $TRUTH`);
+            updateDisplay();
+        }
+
+        function executeSubmit() {
+            const message = document.getElementById('truthMessage').value.trim();
+            const burnAmount = parseInt(document.getElementById('burnAmount').value);
+            const now = Date.now();
+            
+            if (!message) {
+                showNotification('SUBMIT_DENIED: Empty message', 'error');
+                return;
+            }
+            
+            if (burnAmount < 1 || burnAmount > gameState.tokens) {
+                showNotification('SUBMIT_DENIED: Invalid burn amount', 'error');
+                return;
+            }
+            
+            if (now - gameState.lastSubmission < HOUR_MS) {
+                showNotification('SUBMIT_DENIED: Cooldown active', 'error');
+                return;
+            }
+            
+            gameState.tokens -= burnAmount;
+            gameState.totalBurned += burnAmount;
+            gameState.lastSubmission = now;
+            
+            gameState.entries.push({
+                message: message,
+                burned: burnAmount,
+                timestamp: now
+            });
+            
+            document.getElementById('truthMessage').value = '';
+            document.getElementById('burnAmount').value = '10';
+            
+            showNotification(`SUBMIT_SUCCESS: Message committed to blockchain`);
+            updateDisplay();
+        }
+
+        function updateCooldowns() {
+            const now = Date.now();
+            
+            // Claim cooldown
+            const claimBtn = document.getElementById('claimBtn');
+            const claimCooldown = document.getElementById('claimCooldown');
+            const claimRemaining = HOUR_MS - (now - gameState.lastClaim);
+            
+            if (claimRemaining > 0) {
+                claimBtn.disabled = true;
+                claimCooldown.textContent = `COOLDOWN: ${formatDuration(claimRemaining)}`;
+            } else {
+                claimBtn.disabled = false;
+                claimCooldown.textContent = 'Next claim available';
+            }
+            
+            // Submit cooldown
+            const submitBtn = document.getElementById('submitBtn');
+            const submitCooldown = document.getElementById('submitCooldown');
+            const submitRemaining = HOUR_MS - (now - gameState.lastSubmission);
+            
+            if (submitRemaining > 0) {
+                submitBtn.disabled = true;
+                submitCooldown.textContent = `COOLDOWN: ${formatDuration(submitRemaining)}`;
+            } else {
+                submitBtn.disabled = false;
+                submitCooldown.textContent = 'Submit available';
+            }
+        }
+
+        function updateUptime() {
+            const uptime = Date.now() - gameState.startTime;
+            const hours = Math.floor(uptime / 3600000);
+            const minutes = Math.floor((uptime % 3600000) / 60000);
+            const seconds = Math.floor((uptime % 60000) / 1000);
+            
+            document.getElementById('uptime').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function formatDuration(ms) {
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function formatTimestamp(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            
+            if (minutes < 1) return 'NOW';
+            if (minutes < 60) return `${minutes}MIN_AGO`;
+            return `${hours}HR_AGO`;
+        }
+
+        function formatFullTimestamp(timestamp) {
+            return new Date(timestamp).toISOString().slice(0, 19).replace('T', ' ');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function changeScheme(scheme) {
+            // Remove all scheme classes
+            document.body.classList.remove('scheme-green', 'scheme-purple', 'scheme-blue', 'scheme-orange', 'scheme-red', 'scheme-teal', 'scheme-yellow', 'scheme-pink');
+            
+            // Add new scheme class
+            document.body.classList.add('scheme-' + scheme);
+            
+            // Update active button
+            document.querySelectorAll('.scheme-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show notification
+            showNotification('Color scheme changed to ' + scheme.toUpperCase());
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
